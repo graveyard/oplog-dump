@@ -1,0 +1,21 @@
+image: go1.2
+script:
+  - env
+  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+  - sudo echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+  - sudo apt-get update
+  - sudo apt-get install mongodb-org
+  - mongo --eval 'rs.initiate()'
+  - make test
+services:
+  - schimmy/mongodb-tailtest:2.6
+notify:
+  email:
+    recipients:
+      - drone@clever.com
+  hipchat:
+    room: Clever-Dev-CI
+    token: {{hipchatToken}}
+    on_started: true
+    on_success: true
+    on_failure: true
