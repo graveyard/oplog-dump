@@ -56,3 +56,26 @@ func dumpAtTime(t *testing.T, unixTime, expectedResults int) {
 	}
 	assert.Equal(t, expectedResults, count)
 }
+
+func TestCopyBsonFile(t *testing.T) {
+	tempDir, err := ioutil.TempDir("/tmp", "oplogDumpTest")
+	assert.Nil(t, err)
+	defer os.RemoveAll(tempDir)
+
+	// Create a directory structure that mirrors the oplog one the code expects
+	err = os.Mkdir(tempDir+"/local", 0744)
+	assert.Nil(t, err)
+	file, err := os.Create(tempDir + "/local/oplog.rs.bson")
+	assert.Nil(t, err)
+	assert.Nil(t, ioutil.WriteFile(file.Name(), []byte("test-bson-file"), 0644))
+
+	// Create a file to copy to
+	toFile, err := ioutil.TempFile(tempDir, "bsonCopyTest")
+	assert.Nil(t, err)
+	assert.Nil(t, copyBsonFile(tempDir, toFile.Name()))
+
+	// Check that the data matches
+	fileData, err := ioutil.ReadFile(toFile.Name())
+	assert.Nil(t, err)
+	assert.Equal(t, "test-bson-file", string(fileData))
+}

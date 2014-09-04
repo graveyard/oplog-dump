@@ -3,25 +3,27 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"syscall"
+
+	"github.com/Clever/pathio"
 )
 
 func main() {
 	unixTime := flag.Int("time", 0, "Only get the entries greater than or equal to this unix timestamp")
 	mongoUrl := flag.String("host", "localhost", "The mongo url")
-	dumpDir := flag.String("dir", "", "The directory where the data is dumped")
+	path := flag.String("path", "/dev/stdout", "The path to write the dump to")
 	flag.Parse()
 
-	if len(*dumpDir) == 0 {
-		log.Printf("Error: 'dir' not set")
-		flag.PrintDefaults()
-		os.Exit(2)
+	tempDir, err := ioutil.TempDir("/tmp", "systemCopier")
+	if err != nil {
+		panic(err)
 	}
+	defer os.RemoveAll(tempDir)
 
-	if err := runDump(*dumpDir, *mongoUrl, *unixTime); err != nil {
+	if err := runDump(tempDir, *mongoUrl, *unixTime); err != nil {
 		// Try to return the same exit code as mongodump. This doesn't work on all platforms,
 		// so if we can't figure out the exit code then we just use the exit code 2.
 		if exiterr, ok := err.(*exec.ExitError); ok {
@@ -31,6 +33,23 @@ func main() {
 		}
 		os.Exit(2)
 	}
+	if err := copyBsonFile(tempDir, *path); err != nil {
+		panic(err)
+	}
+}
+
+// copyBsonFile copies the file from the dump directory to the specified location.
+func copyBsonFile(tempDir, destination string) error {
+	file, err := os.Open(tempDir + "/local/oplog.rs.bson")
+	if err != nil {
+		return err
+	}
+	stats, err := file.Stat()
+	if err != nil {
+		return err
+	}
+	return pathio.WriteReader(destination, file, stats.Size())
+
 }
 
 // runDump runs the mongodump command. It's factored out so that it can be unit tested easily.
