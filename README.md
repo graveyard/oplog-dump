@@ -17,6 +17,6 @@ Run it as follows:
 `oplog-dump --dir /tmp/out`
 
 Params:
-  -dir="": The directory to dump the data to
+  -path="/dev/stdout": The path to write the dump to
   -mongoUrl="localhost": The URL to dump from
   -unixTime=0: Grab all oplog entries greater than or equal to this timestamp
