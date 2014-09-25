@@ -7,8 +7,10 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
+	"time"
 
 	"github.com/Clever/pathio"
+	"github.com/cenkalti/backoff"
 )
 
 func main() {
@@ -33,9 +35,25 @@ func main() {
 		}
 		os.Exit(2)
 	}
-	if err := copyBsonFile(tempDir, *path); err != nil {
+	if err := writeWithRetry(tempDir, *path); err != nil {
 		panic(err)
 	}
+}
+
+// writeWithRetry writes to the specified path, retrying a few times on error.
+func writeWithRetry(tempDir, destination string) error {
+	backoffObj := backoff.ExponentialBackOff{
+		InitialInterval:     5 * time.Second,
+		RandomizationFactor: backoff.DefaultRandomizationFactor,
+		Multiplier:          2,
+		MaxInterval:         30 * time.Second,
+		MaxElapsedTime:      2 * time.Minute,
+		Clock:               backoff.SystemClock,
+	}
+	operation := func() error {
+		return copyBsonFile(tempDir, destination)
+	}
+	return backoff.Retry(operation, &backoffObj)
 }
 
 // copyBsonFile copies the file from the dump directory to the specified location.
