@@ -22,8 +22,8 @@ RUN GOPATH=/etc/go go get github.com/Clever/oplog-dump/...
 RUN GOPATH=/etc/go go build -o /usr/local/bin/oplogdump github.com/Clever/oplog-dump/cmd/oplog-dump
 
 # Gearcmd
-RUN wget https://github.com/Clever/gearcmd/releases/download/v0.1.2/gearcmd-v0.1.2-linux-amd64.tar.gz
-RUN tar -xvf gearcmd-v0.1.2-linux-amd64.tar.gz
-RUN cp gearcmd-v0.1.2-linux-amd64/gearcmd /usr/local/bin/
+RUN wget https://github.com/Clever/gearcmd/releases/download/v0.1.4/gearcmd-v0.1.4-linux-amd64.tar.gz
+RUN tar -xvf gearcmd-v0.1.4-linux-amd64.tar.gz
+RUN cp gearcmd-v0.1.4-linux-amd64/gearcmd /usr/local/bin/
 
 CMD ["/etc/go/src/github.com/Clever/oplog-dump/run_as_worker.sh"]
