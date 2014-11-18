@@ -45,7 +45,7 @@ func dumpAtTime(t *testing.T, unixTime, expectedResults int) {
 	tempDir, err := ioutil.TempDir("/tmp", "oplogDumpTest")
 	assert.Nil(t, err)
 	defer os.RemoveAll(tempDir)
-	assert.Nil(t, runDump(tempDir, "localhost", unixTime))
+	assert.Nil(t, runDump(tempDir, "localhost", "", unixTime))
 
 	file, err := os.Open(tempDir + "/local/oplog.rs.bson")
 	assert.Nil(t, err)

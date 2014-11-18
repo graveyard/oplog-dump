@@ -15,7 +15,9 @@ func main() {
 	unixTime := flag.Int("time", 0, "Only get the entries greater than or equal to this unix timestamp")
 	mongoUrl := flag.String("host", "localhost", "The mongo url")
 	path := flag.String("path", "/dev/stdout", "The path to write the dump to")
+	collection := flag.String("collection", "", "Collection selector")
 	flag.Parse()
+	fmt.Println(collection)
 
 	tempDir, err := ioutil.TempDir("/tmp", "systemCopier")
 	if err != nil {
@@ -23,7 +25,7 @@ func main() {
 	}
 	defer os.RemoveAll(tempDir)
 
-	if err := runDump(tempDir, *mongoUrl, *unixTime); err != nil {
+	if err := runDump(tempDir, *mongoUrl, *collection, *unixTime); err != nil {
 		// Try to return the same exit code as mongodump. This doesn't work on all platforms,
 		// so if we can't figure out the exit code then we just use the exit code 2.
 		if exiterr, ok := err.(*exec.ExitError); ok {
@@ -53,13 +55,17 @@ func copyBsonFile(tempDir, destination string) error {
 }
 
 // runDump runs the mongodump command. It's factored out so that it can be unit tested easily.
-func runDump(dumpDir, host string, unixTime int) error {
+func runDump(dumpDir, host, collection string, unixTime int) error {
+	mongoQuery := ""
+	if collection != "" {
+		mongoQuery = ", ns : " + collection
+	}
 	cmd := exec.Command("mongodump",
 		"--db", "local",
 		"--collection", "oplog.rs",
 		"--out", dumpDir,
 		"--host", host,
-		"--query", fmt.Sprintf("{ts : { $gte : Timestamp(%d, 0)}}", unixTime))
+		"--query", fmt.Sprintf("{ts : { $gte : Timestamp(%d, 0)}%s}", unixTime, mongoQuery))
 	// Forward stderr for logging / debugging. Note that we forward stdout to stderr so that it doesn't
 	// polluate the command's return value (ie stdout)
 	cmd.Stderr = os.Stderr
