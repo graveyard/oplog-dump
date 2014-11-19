@@ -3,12 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/Clever/pathio"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
-
-	"github.com/Clever/pathio"
 )
 
 func main() {
@@ -56,16 +56,19 @@ func copyBsonFile(tempDir, destination string) error {
 
 // runDump runs the mongodump command. It's factored out so that it can be unit tested easily.
 func runDump(dumpDir, host, collection string, unixTime int) error {
-	mongoQuery := ""
+	queries := []string{fmt.Sprintf("ts : { $gte : Timestamp(%d, 0) }", unixTime)}
 	if collection != "" {
-		mongoQuery = ", ns : " + collection
+		if !strings.Contains(collection, "{") {
+			collection = fmt.Sprintf("\"%s\"", collection)
+		}
+		queries = append(queries, fmt.Sprintf("ns : %s", collection))
 	}
 	cmd := exec.Command("mongodump",
 		"--db", "local",
 		"--collection", "oplog.rs",
 		"--out", dumpDir,
 		"--host", host,
-		"--query", fmt.Sprintf("{ts : { $gte : Timestamp(%d, 0)}%s}", unixTime, mongoQuery))
+		"--query", fmt.Sprintf("{ %s }", strings.Join(queries, ", ")))
 	// Forward stderr for logging / debugging. Note that we forward stdout to stderr so that it doesn't
 	// polluate the command's return value (ie stdout)
 	cmd.Stderr = os.Stderr
