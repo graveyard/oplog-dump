@@ -36,7 +36,7 @@ func TestComposingWithOplogReplay(t *testing.T) {
 	c := db.C("myCollection")
 	assert.Nil(t, c.Insert(&simpleDocStruct{key: "key"}))
 
-	time.Sleep(time.Duration(2) * time.Second)
+	time.Sleep(time.Duration(3) * time.Second)
 
 	assert.Nil(t, c.Insert(&simpleDocStruct{key: "key2"}))
 	// Dump at the time we started operations. Should get both operations
