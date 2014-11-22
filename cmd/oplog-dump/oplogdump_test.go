@@ -28,7 +28,6 @@ func getPaddedTime() (n int) {
 func TestComposingWithOplogReplay(t *testing.T) {
 	// This test assumes that we're connecting to Mongo replica set. Otherwise, the oplog won't
 	// be generated.
-
 	unixTime := getPaddedTime()
 	session, err := mgo.Dial("localhost")
 	assert.Nil(t, err)
@@ -60,16 +59,16 @@ func TestCollectionFiltering(t *testing.T) {
 	assert.Nil(t, c3.Insert(&simpleDocStruct{key: "key3"}))
 
 	dumpAtTime(t, unixTime, 3, "")
-	dumpAtTime(t, unixTime, 1, "myTestDb.myCollection")
-	dumpAtTime(t, unixTime, 1, "myTestDb.yourCollection")
-	dumpAtTime(t, unixTime, 2, "{$ne : \"myTestDb.myCollection\"}")
+	dumpAtTime(t, unixTime, 1, "{ns: \"myTestDb.myCollection\"}")
+	dumpAtTime(t, unixTime, 1, "{ns: \"myTestDb.yourCollection\"}")
+	dumpAtTime(t, unixTime, 2, "{ns: {$ne : \"myTestDb.myCollection\"}}")
 }
 
-func dumpAtTime(t *testing.T, unixTime, expectedResults int, collection string) {
+func dumpAtTime(t *testing.T, unixTime, expectedResults int, query string) {
 	tempDir, err := ioutil.TempDir("/tmp", "oplogDumpTest")
 	assert.Nil(t, err)
 	defer os.RemoveAll(tempDir)
-	assert.Nil(t, runDump(tempDir, "localhost", collection, unixTime))
+	assert.Nil(t, runDump(tempDir, "localhost", query, unixTime))
 
 	file, err := os.Open(tempDir + "/local/oplog.rs.bson")
 	assert.Nil(t, err)
