@@ -18,11 +18,11 @@ type simpleDocStruct struct {
 	key string
 }
 
-func getPaddedTime() (n int) {
+func getPaddedTime() int {
 	time.Sleep(time.Duration(1) * time.Second)
-	n = int(time.Now().Unix())
+	n := int(time.Now().Unix())
 	time.Sleep(time.Duration(2) * time.Second)
-	return
+	return n
 }
 
 func TestComposingWithOplogReplay(t *testing.T) {
