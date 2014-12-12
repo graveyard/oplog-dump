@@ -60,7 +60,6 @@ func TestCollectionFiltering(t *testing.T) {
 
 	dumpAtTime(t, unixTime, 3, "")
 	dumpAtTime(t, unixTime, 1, "{ns: \"myTestDb.myCollection\"}")
-	dumpAtTime(t, unixTime, 1, "{ns: \"myTestDb.yourCollection\"}")
 	dumpAtTime(t, unixTime, 2, "{ns: {$ne : \"myTestDb.myCollection\"}}")
 }
 
