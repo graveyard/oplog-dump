@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -18,7 +19,7 @@ func main() {
 	unixTime := flag.Int("time", 0, "Only get the entries greater than or equal to this unix timestamp")
 	mongoUrl := flag.String("host", "localhost", "The mongo url")
 	path := flag.String("path", "/dev/stdout", "The path to write the dump to")
-	query := flag.String("query", "", "Query selector")
+	query := flag.String("query", "", "Query selector, e.g. '{ns: \"database_name.collection_name\"}'")
 	flag.Parse()
 
 	tempDir, err := ioutil.TempDir("/tmp", "systemCopier")
@@ -75,9 +76,12 @@ func copyBsonFile(tempDir, destination string) error {
 // runDump runs the mongodump command. It's factored out so that it can be unit tested easily.
 func runDump(dumpDir, host, userQuery string, unixTime int) error {
 	individualQueries := []string{fmt.Sprintf("ts : { $gte : Timestamp(%d, 0) }", unixTime)}
-	if userQuery = strings.TrimSpace(userQuery); len(userQuery) > 2 {
+	userQuery = strings.TrimSpace(userQuery)
+	if strings.HasPrefix(userQuery, "{") && strings.HasSuffix(userQuery, "}") {
 		userQuery = userQuery[1 : len(userQuery)-1] // trim outer curly braces
 		individualQueries = append(individualQueries, userQuery)
+	} else if userQuery != "" {
+		return errors.New("Query must be deliniated by outer curly braces")
 	}
 	query := fmt.Sprintf("{ %s }", strings.Join(individualQueries, ", "))
 	cmd := exec.Command("mongodump",
