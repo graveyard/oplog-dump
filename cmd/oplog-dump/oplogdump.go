@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
 	"time"
 
@@ -17,6 +19,7 @@ func main() {
 	unixTime := flag.Int("time", 0, "Only get the entries greater than or equal to this unix timestamp")
 	mongoUrl := flag.String("host", "localhost", "The mongo url")
 	path := flag.String("path", "/dev/stdout", "The path to write the dump to")
+	query := flag.String("query", "", "Query selector, e.g. '{ns: \"database_name.collection_name\"}'")
 	flag.Parse()
 
 	tempDir, err := ioutil.TempDir("/tmp", "systemCopier")
@@ -25,7 +28,7 @@ func main() {
 	}
 	defer os.RemoveAll(tempDir)
 
-	if err := runDump(tempDir, *mongoUrl, *unixTime); err != nil {
+	if err := runDump(tempDir, *mongoUrl, *query, *unixTime); err != nil {
 		// Try to return the same exit code as mongodump. This doesn't work on all platforms,
 		// so if we can't figure out the exit code then we just use the exit code 2.
 		if exiterr, ok := err.(*exec.ExitError); ok {
@@ -71,13 +74,22 @@ func copyBsonFile(tempDir, destination string) error {
 }
 
 // runDump runs the mongodump command. It's factored out so that it can be unit tested easily.
-func runDump(dumpDir, host string, unixTime int) error {
+func runDump(dumpDir, host, userQuery string, unixTime int) error {
+	individualQueries := []string{fmt.Sprintf("ts : { $gte : Timestamp(%d, 0) }", unixTime)}
+	userQuery = strings.TrimSpace(userQuery)
+	if strings.HasPrefix(userQuery, "{") && strings.HasSuffix(userQuery, "}") {
+		userQuery = userQuery[1 : len(userQuery)-1] // trim outer curly braces
+		individualQueries = append(individualQueries, userQuery)
+	} else if userQuery != "" {
+		return errors.New("Query must be deliniated by outer curly braces")
+	}
+	query := fmt.Sprintf("{ %s }", strings.Join(individualQueries, ", "))
 	cmd := exec.Command("mongodump",
 		"--db", "local",
 		"--collection", "oplog.rs",
 		"--out", dumpDir,
 		"--host", host,
-		"--query", fmt.Sprintf("{ts : { $gte : Timestamp(%d, 0)}}", unixTime))
+		"--query", query)
 	// Forward stderr for logging / debugging. Note that we forward stdout to stderr so that it doesn't
 	// polluate the command's return value (ie stdout)
 	cmd.Stderr = os.Stderr

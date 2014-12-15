@@ -18,14 +18,17 @@ type simpleDocStruct struct {
 	key string
 }
 
+func getPaddedTime() int {
+	time.Sleep(time.Duration(1) * time.Second)
+	n := int(time.Now().Unix())
+	time.Sleep(time.Duration(2) * time.Second)
+	return n
+}
+
 func TestComposingWithOplogReplay(t *testing.T) {
 	// This test assumes that we're connecting to Mongo replica set. Otherwise, the oplog won't
 	// be generated.
-
-	unixTime := int(time.Now().Unix())
-
-	time.Sleep(time.Duration(1) * time.Second)
-
+	unixTime := getPaddedTime()
 	session, err := mgo.Dial("localhost")
 	assert.Nil(t, err)
 	db := session.DB("myTestDb")
@@ -36,16 +39,35 @@ func TestComposingWithOplogReplay(t *testing.T) {
 
 	assert.Nil(t, c.Insert(&simpleDocStruct{key: "key2"}))
 	// Dump at the time we started operations. Should get both operations
-	dumpAtTime(t, unixTime, 2)
+	dumpAtTime(t, unixTime, 2, "")
 	// Three seconds later we should get only one.
-	dumpAtTime(t, unixTime+3, 1)
+	dumpAtTime(t, unixTime+3, 1, "")
 }
 
-func dumpAtTime(t *testing.T, unixTime, expectedResults int) {
+func TestCollectionFiltering(t *testing.T) {
+	// This test assumes that we're connecting to Mongo replica set. Otherwise, the oplog won't
+	// be generated.
+
+	unixTime := getPaddedTime()
+	session, err := mgo.Dial("localhost")
+	assert.Nil(t, err)
+	db := session.DB("myTestDb")
+	c1, c2, c3 := db.C("myCollection"), db.C("yourCollection"), db.C("ourCollection")
+
+	assert.Nil(t, c1.Insert(&simpleDocStruct{key: "key"}))
+	assert.Nil(t, c2.Insert(&simpleDocStruct{key: "key2"}))
+	assert.Nil(t, c3.Insert(&simpleDocStruct{key: "key3"}))
+
+	dumpAtTime(t, unixTime, 3, "")
+	dumpAtTime(t, unixTime, 1, "{ns: \"myTestDb.myCollection\"}")
+	dumpAtTime(t, unixTime, 2, "{ns: {$ne : \"myTestDb.myCollection\"}}")
+}
+
+func dumpAtTime(t *testing.T, unixTime, expectedResults int, query string) {
 	tempDir, err := ioutil.TempDir("/tmp", "oplogDumpTest")
 	assert.Nil(t, err)
 	defer os.RemoveAll(tempDir)
-	assert.Nil(t, runDump(tempDir, "localhost", unixTime))
+	assert.Nil(t, runDump(tempDir, "localhost", query, unixTime))
 
 	file, err := os.Open(tempDir + "/local/oplog.rs.bson")
 	assert.Nil(t, err)
