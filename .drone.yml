@@ -1,33 +1,33 @@
 image: go1.2
-script:
-  - env
-  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-  - sudo echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
-  - sudo apt-get update
-  - sudo apt-get install mongodb-org
-  - mongo --eval 'rs.initiate()'
-  - make test
-services:
-  - schimmy/mongodb-tailtest:2.6
 notify:
   email:
     recipients:
-      - drone@clever.com
-  hipchat:
-    room: Clever-Dev-CI
-    token: {{hipchatToken}}
-    on_started: true
-    on_success: true
+    - drone@clever.com
+  slack:
     on_failure: true
+    on_started: false
+    on_success: false
+    webhook_url: $$slack_webhook
 publish:
   docker:
-    docker_port: 4243
-    docker_server: {{docker_server}}
-    docker_version: 1.2
-    email: {{docker_email}}
+    docker_server: $$docker_server
+    email: $$docker_email
     image_name: clever/oplog-dump
-    password: {{docker_password}}
-    push_latest: true
+    password: $$docker_password
     registry_login: true
-    username: {{docker_username}}
-    branch: master
+    tags:
+    - $(git rev-parse --short HEAD)
+    username: $$docker_username
+    when:
+      branch: master
+script:
+- env
+- sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+- sudo echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen'
+  | sudo tee /etc/apt/sources.list.d/mongodb.list
+- sudo apt-get update
+- sudo apt-get install mongodb-org
+- mongo --eval 'rs.initiate()'
+- make test
+services:
+- schimmy/mongodb-tailtest:2.6
