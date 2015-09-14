@@ -11,8 +11,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Clever/pathio"
 	"github.com/cenkalti/backoff"
+	"gopkg.in/Clever/pathio.v1"
 )
 
 func main() {
