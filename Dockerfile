@@ -22,6 +22,6 @@ RUN GOPATH=/etc/go go get github.com/Clever/oplog-dump/...
 RUN GOPATH=/etc/go go build -o /usr/local/bin/oplogdump github.com/Clever/oplog-dump/cmd/oplog-dump
 
 # Gearcmd
-RUN curl -L https://github.com/Clever/gearcmd/releases/download/v0.3.8/gearcmd-v0.3.8-linux-amd64.tar.gz | tar xz -C /usr/local/bin --strip-components 1
+RUN curl -L https://github.com/Clever/gearcmd/releases/download/v0.4.0/gearcmd-v0.4.0-linux-amd64.tar.gz | tar xz -C /usr/local/bin --strip-components 1
 
 CMD ["gearcmd", "--name", "oplog-dump", "--cmd", "/usr/local/bin/oplogdump", "--cmdtimeout", "1h"]
