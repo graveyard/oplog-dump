@@ -22,7 +22,7 @@ publish:
     - $(git rev-parse --short HEAD)
     username: $$docker_username
     when:
-      branch: master
+      branch: new-dockerfile-format
 script:
 - env
 - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
@@ -32,5 +32,6 @@ script:
 - sudo apt-get install mongodb-org
 - mongo --eval 'rs.initiate()'
 - make test
+- make build
 services:
 - schimmy/mongodb-tailtest:2.6
