@@ -23,3 +23,7 @@ Params:
   -query="": (Optional) grab all oplog entries satisfying the query
 
 The query should be a Mongo query, for example the query '{ ns : { $ne : \"database.cooldocs\" } }' would retrieve everything in database `database` outside of the `cooldocs` collection, while '{ ns : \"database.cooldocs\" }' would grab exactly the `cooldocs` collection. Take a look at the oplog collection to see the structure of ops.
+
+## Vendoring
+
+Please view the [dev-handbook for instructions](https://github.com/Clever/dev-handbook/blob/master/golang/godep.md).

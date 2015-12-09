@@ -32,5 +32,6 @@ script:
 - sudo apt-get install mongodb-org
 - mongo --eval 'rs.initiate()'
 - make test
+- make build
 services:
 - schimmy/mongodb-tailtest:2.6
