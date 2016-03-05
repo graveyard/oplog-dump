@@ -1,31 +1,21 @@
+include golang.mk
+.DEFAULT_GOAL := test # override default goal set in library makefile
+
+.PHONY: all test build vendor
 SHELL := /bin/bash
 PKG := github.com/Clever/oplog-dump/cmd/oplog-dump
 PKGS := $(shell go list ./... | grep -v /vendor)
-EXECUTABLE := oplog-dump
-.PHONY: all test build vendor
+EXECUTABLE := $(basename $(PKG))
+$(eval $(call golang-version-check,1.5))
 
-GOVERSION := $(shell go version | grep 1.5)
-ifeq "$(GOVERSION)" ""
-  $(error must be running Go version 1.5)
-endif
-export GO15VENDOREXPERIMENT = 1
-
-GOLINT := $(GOPATH)/bin/golint
-$(GOLINT):
-	go get github.com/golang/lint/golint
-
-GODEP := $(GOPATH)/bin/godep
-$(GODEP):
-	go get -u github.com/tools/godep
-
-all: build test
+all: test build
 
 build:
 	go build -o bin/$(EXECUTABLE) $(PKG)
 
-test:
-	go test $(PKGS)
+test: $(PKGS)
+$(PKGS): golang-test-all-deps
+	$(call golang-test-all,$@)
 
-vendor: $(GODEP)
-	$(GODEP) save $(PKGS)
-	find vendor/ -path '*/vendor' -type d | xargs -IX rm -r X # remove any nested vendor directories
+vendor: golang-godep-vendor-deps
+	$(call golang-godep-vendor,$(PKGS))
