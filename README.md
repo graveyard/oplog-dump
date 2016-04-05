@@ -4,7 +4,7 @@ A binary that dumps the oplog from MongoDB.
 
 This has some advantages over a direct mongodump command:
 - Its interface is designed specifically for creating oplog dumps for a certain point in time.
-- It can be used in conjunction with www.github.com/Clever/oplog-replay to run Mongo operations on multiple databases.
+- It can be used in conjunction with https://github.com/Clever/mongo-op-throttler to run Mongo operations on multiple databases.
 
 
 Usage
