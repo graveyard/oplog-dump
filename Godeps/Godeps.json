@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/Clever/oplog-dump",
-	"GoVersion": "go1.5.1",
+	"GoVersion": "go1.6",
 	"Packages": [
 		"github.com/Clever/oplog-dump/cmd/oplog-dump"
 	],
@@ -11,29 +11,57 @@
 			"Rev": "338a194f827c51f7fa215b7a0bd9e7357c65df95"
 		},
 		{
+			"ImportPath": "github.com/aws/aws-sdk-go/aws",
+			"Comment": "v1.1.28",
+			"Rev": "501dd3226ceb6863d89d82e9f7c9f59a43efb008"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/private/endpoints",
+			"Comment": "v1.1.28",
+			"Rev": "501dd3226ceb6863d89d82e9f7c9f59a43efb008"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/private/protocol",
+			"Comment": "v1.1.28",
+			"Rev": "501dd3226ceb6863d89d82e9f7c9f59a43efb008"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/private/signer/v4",
+			"Comment": "v1.1.28",
+			"Rev": "501dd3226ceb6863d89d82e9f7c9f59a43efb008"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/private/waiter",
+			"Comment": "v1.1.28",
+			"Rev": "501dd3226ceb6863d89d82e9f7c9f59a43efb008"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/s3",
+			"Comment": "v1.1.28",
+			"Rev": "501dd3226ceb6863d89d82e9f7c9f59a43efb008"
+		},
+		{
 			"ImportPath": "github.com/cenkalti/backoff",
 			"Rev": "4dc77674aceaabba2c7e3da25d4c823edfb73f99"
 		},
 		{
-			"ImportPath": "github.com/mitchellh/goamz/aws",
-			"Rev": "72f92d689673c197c1dd25d6067ee274510e120e"
+			"ImportPath": "github.com/go-ini/ini",
+			"Comment": "v0-54-g2e44421",
+			"Rev": "2e44421e256d82ebbf3d4d4fcabe8930b905eff3"
 		},
 		{
-			"ImportPath": "github.com/mitchellh/goamz/s3",
-			"Rev": "72f92d689673c197c1dd25d6067ee274510e120e"
+			"ImportPath": "github.com/jmespath/go-jmespath",
+			"Comment": "0.2.2",
+			"Rev": "3433f3ea46d9f8019119e7dd41274e112a2359a9"
 		},
 		{
 			"ImportPath": "github.com/stretchr/testify/assert",
 			"Rev": "efa3c4c36479edac5af79cbcb4bc8cb525e09b13"
 		},
 		{
-			"ImportPath": "github.com/vaughan0/go-ini",
-			"Rev": "a98ad7ee00ec53921f08832bc06ecf7fd600e6a1"
-		},
-		{
-			"ImportPath": "gopkg.in/Clever/pathio.v1",
-			"Comment": "v1.1.0",
-			"Rev": "de4e947183a362010d3fc4ed91ca1c129b5d4181"
+			"ImportPath": "gopkg.in/Clever/pathio.v3",
+			"Comment": "v3.1.1",
+			"Rev": "340a7797be782afcb9a127c959e03b4dce4c3c35"
 		},
 		{
 			"ImportPath": "labix.org/v2/mgo",

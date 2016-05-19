@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff"
-	"gopkg.in/Clever/pathio.v1"
+	"gopkg.in/Clever/pathio.v3"
 )
 
 func main() {
