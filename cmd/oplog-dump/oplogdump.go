@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff"
-	"gopkg.in/Clever/pathio.v1"
+	"gopkg.in/Clever/pathio.v3"
 )
 
 func main() {
@@ -65,11 +65,11 @@ func copyBsonFile(tempDir, destination string) error {
 	if err != nil {
 		return err
 	}
-	stats, err := file.Stat()
+	_, err = file.Stat()
 	if err != nil {
 		return err
 	}
-	return pathio.WriteReader(destination, file, stats.Size())
+	return pathio.WriteReader(destination, file)
 
 }
 
