@@ -39,7 +39,7 @@ func TestComposingWithOplogReplay(t *testing.T) {
 
 	assert.Nil(t, c.Insert(&simpleDocStruct{key: "key2"}))
 	// Dump at the time we started operations. Should get both operations
-	dumpAtTime(t, unixTime, 2, "")
+	dumpAtTime(t, unixTime, 2, "{ns: {$ne: \"myTestDb.$cmd\"}}")
 	// Three seconds later we should get only one.
 	dumpAtTime(t, unixTime+3, 1, "")
 }
@@ -58,9 +58,9 @@ func TestCollectionFiltering(t *testing.T) {
 	assert.Nil(t, c2.Insert(&simpleDocStruct{key: "key2"}))
 	assert.Nil(t, c3.Insert(&simpleDocStruct{key: "key3"}))
 
-	dumpAtTime(t, unixTime, 3, "")
+	dumpAtTime(t, unixTime, 3, "{ns: {$ne: \"myTestDb.$cmd\"}}")
 	dumpAtTime(t, unixTime, 1, "{ns: \"myTestDb.myCollection\"}")
-	dumpAtTime(t, unixTime, 2, "{ns: {$ne : \"myTestDb.myCollection\"}}")
+	dumpAtTime(t, unixTime, 2, "{ns: {$nin : [\"myTestDb.myCollection\", \"myTestDb.$cmd\"]}}")
 }
 
 func dumpAtTime(t *testing.T, unixTime, expectedResults int, query string) {
