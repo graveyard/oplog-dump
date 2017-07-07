@@ -35,13 +35,13 @@ func TestComposingWithOplogReplay(t *testing.T) {
 	c := db.C("myCollection")
 	assert.Nil(t, c.Insert(&simpleDocStruct{key: "key"}))
 
-	time.Sleep(time.Duration(3) * time.Second)
+	time.Sleep(time.Duration(5) * time.Second)
 
 	assert.Nil(t, c.Insert(&simpleDocStruct{key: "key2"}))
 	// Dump at the time we started operations. Should get both operations
 	dumpAtTime(t, unixTime, 2, "{ns: {$ne: \"myTestDb.$cmd\"}}")
-	// Three seconds later we should get only one.
-	dumpAtTime(t, unixTime+3, 1, "")
+	// 5 seconds later we should get only one.
+	dumpAtTime(t, unixTime+5, 1, "")
 }
 
 func TestCollectionFiltering(t *testing.T) {
