@@ -6,7 +6,7 @@ env:
 - AWS_REGION
 dependencies:
 - gearmand
-team: eng-apps
+team: eng-secure-sync
 resources:
   cpu: 0.0  # no CPU to improve resource usage (https://clever.atlassian.net/browse/INFRA-2120)
   max_mem: 0.05
