@@ -6,7 +6,7 @@ SHELL := /bin/bash
 PKG := github.com/Clever/oplog-dump/cmd/oplog-dump
 PKGS := $(shell go list ./... | grep -v /vendor)
 EXECUTABLE := $(shell basename $(PKG))
-$(eval $(call golang-version-check,1.9))
+$(eval $(call golang-version-check,1.10))
 
 all: test build
 
