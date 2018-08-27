@@ -5,7 +5,7 @@ jobs:
     docker:
     - image: circleci/golang:1.10.3-stretch
     - image: circleci/mongo:3.2.20-jessie-ram
-      command: |-
+      entrypoint: |-
         echo "replSet = TailTest" | sudo tee --append /etc/mongod.conf > /dev/null
         sudo service mongod restart
         mongo --eval 'rs.initiate()'
