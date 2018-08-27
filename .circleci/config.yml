@@ -5,6 +5,10 @@ jobs:
     docker:
     - image: circleci/golang:1.10.3-stretch
     - image: circleci/mongo:3.2.20-jessie-ram
+      command: |-
+        echo "replSet = TailTest" | sudo tee --append /etc/mongod.conf > /dev/null
+        sudo service mongod restart
+        mongo --eval 'rs.initiate()'
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
@@ -19,9 +23,6 @@ jobs:
         name: Set up CircleCI artifacts directories
     - run: make install_deps
     - run: make build
-    - run: echo "replSet = TailTest" | sudo tee --append /etc/mongod.conf > /dev/null
-    - run: sudo service mongod restart
-    - run: mongo --eval 'rs.initiate()'
     - run: make test
     - run: $HOME/ci-scripts/circleci/report-card $RC_DOCKER_USER $RC_DOCKER_PASS "$RC_DOCKER_EMAIL" $RC_GITHUB_TOKEN
     - run:
