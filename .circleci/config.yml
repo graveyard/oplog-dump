@@ -4,11 +4,8 @@ jobs:
     working_directory: /go/src/github.com/Clever/oplog-dump
     docker:
     - image: circleci/golang:1.10.3-stretch
-    - image: circleci/mongo:3.2.20-jessie-ram
-      entrypoint: |-
-        echo "replSet = TailTest" | sudo tee --append /etc/mongod.conf > /dev/null &&
-        sudo service mongod restart &&
-        mongo --eval 'rs.initiate()'
+    - image: mongo:3.2.20-jessie
+      entrypoint: ["mongod", "--nojournal", "--smallfiles", "--replSet", "TailTest"]
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
@@ -21,6 +18,18 @@ jobs:
     - run:
         command: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
         name: Set up CircleCI artifacts directories
+    - run:
+        name: initiate mongo replset for tests
+        command: |-
+          # download mongo tar
+          curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.20.tgz
+          # extract tar
+          tar -zxvf ./mongodb-linux-x86_64-3.2.20.tgz -C ~/
+          # add mongo binary location to path
+          export PATH=~/mongodb-linux-x86_64-3.2.20/bin:$PATH
+          # initiate & confirm replset
+          mongo --eval "rs.initiate()"
+          mongo --eval "rs.status()"
     - run: make install_deps
     - run: make build
     - run: make test
