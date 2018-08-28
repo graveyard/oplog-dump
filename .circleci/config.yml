@@ -5,7 +5,7 @@ jobs:
     docker:
     - image: circleci/golang:1.10.3-stretch
     - image: circleci/mongo:3.2.20-jessie-ram
-      command: [mongod, --replSet "TailTest"]
+      command: [mongod, "--replSet TailTest"]
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
