@@ -23,13 +23,13 @@ jobs:
         command: |-
           curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.20.tgz
           echo "0"
-          mv mongodb-linux-x86_64-3.2.20.tgz ~/
-          echo "1"
-          tar -zxvf ~/mongodb-linux-x86_64-3.2.20.tgz
-          echo "2"
           mkdir -p ~/mongodb
+          echo "1"
+          ls ~
+          echo "2"
+          tar -zxvf ./mongodb-linux-x86_64-3.2.20.tgz -C ~/mongodb
           echo "3"
-          cp -R -n ~/mongodb-linux-x86_64-3.2.20/ ~/mongodb
+          ls ~/mongodb
           echo "4"
           export PATH=~/mongodb/bin:$PATH
           echo "5"
