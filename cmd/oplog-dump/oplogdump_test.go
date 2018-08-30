@@ -30,6 +30,10 @@ func TestComposingWithOplogReplay(t *testing.T) {
 	// be generated.
 	unixTime := getPaddedTime()
 	session, err := mgo.Dial("localhost")
+	if err != nil {
+		t.Log(err.Error())
+	}
+
 	assert.Nil(t, err)
 	db := session.DB("myTestDb")
 	c := db.C("myCollection")
@@ -50,6 +54,10 @@ func TestCollectionFiltering(t *testing.T) {
 
 	unixTime := getPaddedTime()
 	session, err := mgo.Dial("localhost")
+
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(t, err)
 	db := session.DB("myTestDb")
 	c1, c2, c3 := db.C("myCollection"), db.C("yourCollection"), db.C("ourCollection")
@@ -65,11 +73,23 @@ func TestCollectionFiltering(t *testing.T) {
 
 func dumpAtTime(t *testing.T, unixTime, expectedResults int, query string) {
 	tempDir, err := ioutil.TempDir("/tmp", "oplogDumpTest")
+
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(t, err)
 	defer os.RemoveAll(tempDir)
-	assert.Nil(t, runDump(tempDir, "localhost", query, unixTime))
+	err = runDump(tempDir, "localhost", query, unixTime)
+	if err != nil {
+		t.Log(err.Error())
+	}
+	assert.Nil(t, err)
 
 	file, err := os.Open(tempDir + "/local/oplog.rs.bson")
+
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(t, err)
 	scanner := bsonScanner.New(file)
 	count := 0
@@ -81,23 +101,43 @@ func dumpAtTime(t *testing.T, unixTime, expectedResults int, query string) {
 
 func TestCopyBsonFile(t *testing.T) {
 	tempDir, err := ioutil.TempDir("/tmp", "oplogDumpTest")
+
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(t, err)
 	defer os.RemoveAll(tempDir)
 
 	// Create a directory structure that mirrors the oplog one the code expects
 	err = os.Mkdir(tempDir+"/local", 0744)
+
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(t, err)
 	file, err := os.Create(tempDir + "/local/oplog.rs.bson")
+
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(t, err)
 	assert.Nil(t, ioutil.WriteFile(file.Name(), []byte("test-bson-file"), 0644))
 
 	// Create a file to copy to
 	toFile, err := ioutil.TempFile(tempDir, "bsonCopyTest")
+
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(t, err)
 	assert.Nil(t, copyBsonFile(tempDir, toFile.Name()))
 
 	// Check that the data matches
 	fileData, err := ioutil.ReadFile(toFile.Name())
+
+	if err != nil {
+		t.Log(err.Error())
+	}
 	assert.Nil(t, err)
 	assert.Equal(t, "test-bson-file", string(fileData))
 }
