@@ -4,7 +4,7 @@ jobs:
     working_directory: /go/src/github.com/Clever/oplog-dump
     docker:
     - image: circleci/golang:1.10.3-stretch
-    - image: circleci/mongo:3.2.20-jessie
+    - image: mongo:3.2.20-jessie
       command: mongod --replSet TailTest --bind_ip localhost
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
