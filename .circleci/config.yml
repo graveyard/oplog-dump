@@ -6,7 +6,6 @@ jobs:
     - image: circleci/golang:1.10.3-stretch
     - image: mongo:3.2.20-jessie
       entrypoint: ["mongod", "--nojournal", "--noprealloc", "--smallfiles", "--replSet", "TailTest"]
-      command: ["mongo"]
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
@@ -19,6 +18,16 @@ jobs:
     - run:
         command: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
         name: Set up CircleCI artifacts directories
+    - run:
+        name: initiate mongo replset for tests
+        command: |-
+          curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.20.tgz
+          mv mongodb-linux-x86_64-3.2.20.tgz ~/
+          tar -zxvf ~/mongodb-linux-x86_64-3.2.20.tgz
+          mkdir -p ~/mongodb
+          cp -R -n ~/mongodb-linux-x86_64-3.2.20/ ~/mongodb
+          export PATH=~/mongodb/bin:$PATH
+          mongo --version
     - run: make install_deps
     - run: make build
     - run: make test
