@@ -5,7 +5,7 @@ jobs:
     docker:
     - image: circleci/golang:1.10.3-stretch
     - image: mongo:3.2.20-jessie
-      entrypoint: ["mongod", "--nojournal", "--noprealloc", "--smallfiles", "--replSet", "TailTest"]
+      entrypoint: ["mongod", "--nojournal", "--smallfiles", "--replSet", "TailTest"]
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
@@ -21,22 +21,15 @@ jobs:
     - run:
         name: initiate mongo replset for tests
         command: |-
+          # download mongo tar
           curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.20.tgz
-          echo "0"
-          mkdir -p ~/mongodb
-          echo "1"
-          ls ~
-          echo "2"
-          tar -zxvf ./mongodb-linux-x86_64-3.2.20.tgz -C ~/mongodb
-          echo "3"
-          ls ~/mongodb
-          echo "4"
-          echo $PATH
-          export PATH=~/mongodb/bin:$PATH
-          echo $PATH
-          echo "5"
-          mongo --version
-          echo "6"
+          # extract tar
+          tar -zxvf ./mongodb-linux-x86_64-3.2.20.tgz -C ~/
+          # add mongo binary location to path
+          export PATH=~/mongodb-linux-x86_64-3.2.20/bin:$PATH
+          # initiate & confirm replset
+          mongo --eval "rs.initiate()"
+          mongo --eval "rs.status()"
     - run: make install_deps
     - run: make build
     - run: make test
