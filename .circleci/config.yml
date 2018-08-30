@@ -25,15 +25,20 @@ jobs:
           curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.20.tgz
           # extract tar
           tar -zxvf ./mongodb-linux-x86_64-3.2.20.tgz -C ~/
-          # add mongo binary location to path
+          # add mongo binary location to path (and preserve in BASH_ENV script for use in later steps)
           export PATH=~/mongodb-linux-x86_64-3.2.20/bin:$PATH
+          echo 'export PATH=~/mongodb-linux-x86_64-3.2.20/bin:$PATH' >> $BASH_ENV
           # initiate & confirm replset
           mongo --eval "rs.initiate()"
           mongo --eval "rs.status()"
     - run: make install_deps
     - run: make build
-    - run: make test
-    - run: $HOME/ci-scripts/circleci/report-card $RC_DOCKER_USER $RC_DOCKER_PASS "$RC_DOCKER_EMAIL" $RC_GITHUB_TOKEN
+    - run:
+        name: make test
+        command: |-
+          # ensure PATH has mongo commands
+          source $BASH_ENV
+          make test
     - run:
         command: |-
           cd /tmp/ && wget https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py
