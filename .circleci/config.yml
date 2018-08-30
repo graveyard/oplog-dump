@@ -31,7 +31,9 @@ jobs:
           echo "3"
           ls ~/mongodb
           echo "4"
+          echo $PATH
           export PATH=~/mongodb/bin:$PATH
+          echo $PATH
           echo "5"
           mongo --version
           echo "6"
