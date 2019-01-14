@@ -9,8 +9,9 @@
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
-  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restxml","private/protocol/xml/xmlutil","service/s3","service/sts"]
-  revision = "ae53883b2478fd8e2bdca2748367d5b5fa27ca22"
+  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/processcreds","aws/credentials/stscreds","aws/csm","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/ini","internal/s3err","internal/sdkio","internal/sdkrand","internal/sdkuri","internal/shareddefaults","private/protocol","private/protocol/eventstream","private/protocol/eventstream/eventstreamapi","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restxml","private/protocol/xml/xmlutil","service/s3","service/sts"]
+  revision = "aabf189db35ba7eb5a35afe6d681fc0f70954fca"
+  version = "v1.16.18"
 
 [[projects]]
   name = "github.com/cenkalti/backoff"
@@ -18,15 +19,15 @@
   revision = "4dc77674aceaabba2c7e3da25d4c823edfb73f99"
 
 [[projects]]
-  name = "github.com/go-ini/ini"
-  packages = ["."]
-  revision = "2e44421e256d82ebbf3d4d4fcabe8930b905eff3"
+  branch = "master"
+  name = "github.com/golang/mock"
+  packages = ["gomock"]
+  revision = "e698a2ea17fee71b248fc2bba82fc544c2017f93"
 
 [[projects]]
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
-  revision = "3433f3ea46d9f8019119e7dd41274e112a2359a9"
-  version = "0.2.2"
+  revision = "c2b33e84"
 
 [[projects]]
   name = "github.com/stretchr/testify"
@@ -36,8 +37,8 @@
 [[projects]]
   name = "gopkg.in/Clever/pathio.v3"
   packages = ["."]
-  revision = "340a7797be782afcb9a127c959e03b4dce4c3c35"
-  version = "v3.1.1"
+  revision = "0c6b7e01bb7370a45ee1cc5c06cfa7de1eb7971e"
+  version = "v3.4.2"
 
 [[projects]]
   branch = "v2"
