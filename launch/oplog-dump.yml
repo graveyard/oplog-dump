@@ -11,3 +11,4 @@ aws:
   s3:
     write:
     - oplogs
+  custom: true
