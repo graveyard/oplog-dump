@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: /go/src/github.com/Clever/oplog-dump
     docker:
-    - image: circleci/golang:1.10.3-stretch
+    - image: circleci/golang:1.12-stretch
     - image: mongo:3.2.20-jessie
       entrypoint: [mongod, --nojournal, --smallfiles, --replSet, TailTest]
     environment:
